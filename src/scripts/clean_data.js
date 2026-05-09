@@ -1,7 +1,7 @@
 const { createClient } = require('@supabase/supabase-js')
 
-const supabaseUrl = 'https://lmxphybsbmglkjdodopl.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxteHBoeWJzYm1nbGtqZG9kb3BsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMjk4NDQsImV4cCI6MjA5MzcwNTg0NH0.KUuHdgR527EGTKSAOeU9oFtfH0YGUAnEg0n16PJfBrU'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 

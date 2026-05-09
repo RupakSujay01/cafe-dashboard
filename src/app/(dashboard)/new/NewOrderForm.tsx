@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { createOrderAction } from '@/app/actions/orders'
 import {
   Coffee, Box, Plus, Minus, Trash2, ShoppingBag,
   User, Hash, Loader2, Check, Sparkles
@@ -63,44 +63,17 @@ export default function NewOrderForm({ menuItems }: { menuItems: MenuItem[] }) {
     if (cart.length === 0) return
     setIsPlacing(true)
 
-    const id = orderType === 'dine-in' 
-      ? `T${tableNumber.replace('Table ', '') || Math.floor(Math.random() * 100)}` 
-      : `TO${Math.floor(Math.random() * 100)}`
-    
-    const customer = orderType === 'dine-in'
-      ? `${tableNumber.startsWith('Table') ? tableNumber : `Table ${tableNumber}`}${customerName ? ` (${customerName})` : ''}`
-      : customerName ? `Takeout (${customerName})` : 'Takeout'
+    const result = await createOrderAction({
+      orderType,
+      tableNumber,
+      customerName,
+      itemsSummary
+    })
 
-    const { error } = await supabase
-      .from('orders')
-      .insert({
-        id,
-        customer_name: customer,
-        items: itemsSummary,
-        status: 'Waiting',
-        color: 'bg-orange-500/20 text-orange-500'
-      })
-
-    if (error) {
-      console.error('Error placing order:', error)
+    if (result.error) {
+      console.error('Error placing order:', result.error)
       setIsPlacing(false)
       return
-    }
-
-    // Also update tables table if it's a dine-in order
-    if (orderType === 'dine-in') {
-      const { error: tableError } = await supabase
-        .from('tables')
-        .upsert({
-          id,
-          name: `Table ${tableNumber}`,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          guests: 2 // Defaulting to 2 guests
-        })
-
-      if (tableError) {
-        console.error('Error updating table:', tableError)
-      }
     }
 
     setIsPlacing(false)
