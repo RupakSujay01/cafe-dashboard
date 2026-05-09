@@ -16,7 +16,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Active Orders", href: "/orders", icon: FileText },
     { name: "Tables", href: "/tables", icon: Grid },
     { name: "Menu", href: "/menu", icon: Coffee },

@@ -49,7 +49,7 @@ export default function LoginForm() {
         setError('Invalid email or password.')
       } else {
         setSuccess('Authenticated! Redirecting...')
-        router.push('/')
+        router.push('/dashboard')
         router.refresh()
         return
       }

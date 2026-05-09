@@ -23,15 +23,22 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  // Skip auth check for landing page to avoid slow Supabase calls
+  if (request.nextUrl.pathname === '/') {
+    return supabaseResponse
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   // If not logged in and not on /login, redirect to /login
+  // EXCEPT for the landing page (/)
   if (
     !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
+    !request.nextUrl.pathname.startsWith('/auth') &&
+    request.nextUrl.pathname !== '/'
   ) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
@@ -41,7 +48,7 @@ export async function updateSession(request: NextRequest) {
   // If logged in and on /login, redirect to dashboard
   if (user && request.nextUrl.pathname.startsWith('/login')) {
     const url = request.nextUrl.clone()
-    url.pathname = '/'
+    url.pathname = '/dashboard'
     return NextResponse.redirect(url)
   }
 
